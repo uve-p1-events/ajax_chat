@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <style media="screen">
+    .left a{
+      float:right;
+      margin-right: 10%;
+    }
+    #msg{
+      width: 200px;
+      height: 25px;
+    }
+
+    #btn{
+      height: 30px;
+      width: 50px;
+    }
+
+    .chat{
+      float: right;
+      margin-right:10%;
+
+    }
+
+    .main{
+        position: fixed;
+        Bottom : 10px;
+        float: Bottom;
+        
+        }
+             /* Chat containers */
+    .container {
+        border: 2px solid #dedede;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+    }
+      
+    /* Darker chat container */
+    .darker {
+        border-color: #ccc;
+        background-color: #ddd;
+    }
+
+    /* Clear floats */
+    .container::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    /* Style images */
+    .container img {
+        float: left;
+        max-width: 60px;
+        width: 100%;
+        margin-right: 20px;
+        border-radius: 50%;
+    }
+
+    /* Style the right image */
+    .container img.right {
+        float: right;
+        margin-left: 20px;
+        margin-right:0;
+    }
+
+    /* Style time text */
+    .time-right {
+        float: right;
+        color: #aaa;
+    }
+
+    /* Style time text */
+    .time-left {
+        float: left;
+        color: #999;
+    } 
+    </style>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="left">
+        <a href="{% url 'logout' %}">logout</a>
+        <h1>Chat app</h1>
+    </div>
+
+
+    <div class="container">
+        <!-- <img src="/w3images/bandmember.jpg" alt="Avatar">
+        <p>Hello. How are you today?</p>
+        <span class="time-right">11:00</span> -->
+    </div>
+  
+  
+
+    <div class="main">
+        <input type="text" id="msg" placeholder="Enetr msg">
+        <button type="button" id='btn'>Send</button>
+        <button type="button" id='test'>test</button>
+
+    </div>
+
+    <!-- <script type="text/javascript" src="{% static 'js/chat.js' %}"></script> -->
+    <script type="text/javascript">
+        $('#btn').click(function(event) {
+            /* Act on the event */
+            console.log("button is clocked");
+            text=$('#msg').val();
+            if (text.length>0) {
+                $.ajax({
+                url: '{% url "logMessage" %}',
+                type: 'POST',
+                dataType: 'json',
+                data: {msg: text, owner:"abhyam",csrfmiddlewaretoken:"{{csrf_token}}"}
+                })
+                .done(function(data) {
+                    $('#msg').val('');
+                    console.log("data is ", data);
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+            }
+        });
+        
+        
+        $.ajax({
+            url:'{% url "getChats" %}',
+            type: 'POST',
+            dataType: 'json',
+            data: {csrfmiddlewaretoken:"{{csrf_token}}"}
+        })
+        .done(function(data) {
+            console.log("mai hu sperman");
+            console.log(data);
+            console.log(data[0]);
+        })
+        .fail(function(error) {
+            console.log("error is", error);
+        })
+        
+        var typing_status_user = false;
+        const input = document.querySelector('#msg');
+
+        var startingtime = new Date();
+        input.addEventListener("input", function(s) {
+            console.log("user is typing");
+            typing_status_user = true;
+            startingtime = new Date();
+        });
+        
+        window.setInterval(() => {
+            if(Math.abs(new Date() - startingtime)> 5000){
+                typing_status_user = false;
+            } 
+            $.ajax({
+                url:'{% url "getChats" %}',
+                type: 'POST',
+                dataType: 'json',
+                data: {owner: "abhyam", typingStatus: typing_status_user, csrfmiddlewaretoken:"{{csrf_token}}"}
+            })
+            .done(function(data) {
+                $("img").remove(".deltableContainer");
+                $("p").remove(".deltableContainer");
+                $("span").remove(".deltableContainer");
+                for(let i = 0;i<data.length;i++){
+                    $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data[i].owner}" class="deltableContainer">
+                                            <p class="deltableContainer" >${data[i].text}</p>
+                                            <span class="time-right deltableContainer">${data[i].timestamp}</span>`);
+    
+                }
+                console.log(`typing status is ${data[0].typing_status}`)
+  
+            })
+            .fail(function() {
+                console.log("error");
+            })
+          },1000);
+
+    </script>
+
+</body>
+</html>
