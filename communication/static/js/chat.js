@@ -6,7 +6,15 @@ function sendMessage(){
         url: logMsg,
         type: 'POST',
         dataType: 'json',
-        data: {msg: text, owner: sessionOwner, recipient: reader, groupFlag: onGroup, group_id: groupId, currentStamp: currentTimestamp, csrfmiddlewaretoken: crsfTocken}
+        data:{
+                msg: text, 
+                owner: sessionOwner, 
+                recipient: reader, 
+                groupFlag: onGroup, 
+                group_id: groupId, 
+                currentStamp: currentTimestamp, 
+                csrfmiddlewaretoken: crsfTocken
+            }
         })
         .done(function(data) {
             $('#msg').val('');
@@ -30,20 +38,20 @@ $('#btn').click(function(event) {
     sendMessage();
 });
 
-$.ajax({
-        url: getChatsUrl,
-        type: 'POST',
-        dataType: 'json',
-        data: {typingStatus: false, recipient: reader, groupFlag: onGroup, group_id: groupId, currentStamp: currentTimestamp, csrfmiddlewaretoken: crsfTocken}
-    })
-    .done(function(data) {
-        console.log("mai hu sperman");
-        console.log(data);
-        console.log(data.chats);
-    })
-    .fail(function(error) {
-        console.log("error is 1", error);
-    })
+// $.ajax({
+//         url: getChatsUrl,
+//         type: 'POST',
+//         dataType: 'json',
+//         data: {typingStatus: false, recipient: reader, groupFlag: onGroup, group_id: groupId, currentStamp: currentTimestamp, csrfmiddlewaretoken: crsfTocken}
+//     })
+//     .done(function(data) {
+//         console.log("mai hu sperman");
+//         console.log(data);
+//         console.log(data.chats);
+//     })
+//     .fail(function(error) {
+//         console.log("error is 1", error);
+//     })
 
 var user_typing_status = false;
 const input = document.querySelector('#msg');
@@ -57,9 +65,13 @@ input.addEventListener("input", function(s) {
 
 // window.document.querySelector('.typing_status').innerHTML = 'abhyam';
 
+var latestChat;
+console.log("before updatetion value of latestchat is ", latestChat);
+// console.log("its length is ", latestChat.length);
+
 window.setInterval(() => {
     // detecting if user is not typing for more than 5 seconds.
-    if(Math.abs(new Date() - startingtime)> 3000){
+    if(Math.abs(new Date() - startingtime) >= 3000){
         user_typing_status = false;
     } 
 
@@ -67,31 +79,81 @@ window.setInterval(() => {
         url: getChatsUrl,
         type: 'POST',
         dataType: 'json',
-        data: {typingStatus: user_typing_status, recipient: reader, groupFlag: onGroup, group_id: groupId, currentStamp: currentTimestamp, csrfmiddlewaretoken: crsfTocken}
+        data:{ 
+                typingStatus: user_typing_status, 
+                recipient: reader, 
+                groupFlag: onGroup, 
+                group_id: groupId, 
+                currentStamp: currentTimestamp, 
+                csrfmiddlewaretoken: crsfTocken
+            }
     })
     .done(function(data) {
-        $("img").remove(".deltableContainer");
-        $("p").remove(".deltableContainer");
-        $("span").remove(".deltableContainer");
-        for(let i = 0;i<data.chats.length;i++){
-            $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
-                                    <p class="deltableContainer" >${data.chats[i].text}</p>
-                                    <span class="time-right deltableContainer">${data.chats[i].timestamp}</span>`);
-
+        // $("img").remove(".deltableContainer");
+        // $("p").remove(".deltableContainer");
+        if (typeof(latestChat) !== "undefined"){
+        // $("span").remove(".deltableContainer");
+            console.log("executed from length >0");
+            console.log("from >0 value of latestchat is", latestChat);
+            let chatIndex = data.chats.findIndex((element) => {
+                if(element.id = latestChat.id && element.owner == latestChat.owner && element.groupId == latestChat.groupId && element.text == latestChat.text && element.isgroup == latestChat.isgroup){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            });
+            console.log("last index is", chatIndex);
+            console.log("chats list is =>", data.chats);
+            console.log("chats list length is =>", data.chats.length);
+            for(let i = chatIndex+1 ;i<data.chats.length; i++){
+                $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
+                                        <p class="deltableContainer">${data.chats[i].text}</p>
+                                        <span class="time-right deltableContainer">${data.chats[i].timestamp}</span>`);
+                if (i == (data.chats.length -1)){
+                    // if (latestChat.length>0){
+                    //     latestChat.pop();
+                    // }
+                    latestChat = data.chats[i];
+                }
+            }
+        }else{
+            console.log("executed from length =0");
+            for(let i = 0; i<data.chats.length; i++){
+                $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
+                                        <p class="deltableContainer">${data.chats[i].text}</p>
+                                        <span class="time-right deltableContainer">${data.chats[i].timestamp}</span>`);
+                if (i == (data.chats.length -1)){
+                    // if (latestChat.length>0){
+                    //     latestChat.pop();
+                    // }
+                    latestChat = data.chats[i];
+                }
+            }
         }
+        // for(let i = 0;i<data.chats.length;i++){
+        //     $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
+        //                             <p class="deltableContainer">${data.chats[i].text}</p>
+        //                             <span class="time-right deltableContainer">${data.chats[i].timestamp}</span>`);
+        //     if (i == (data.chats.length -1) && latestChat.length>0){
+        //         latestChat.pop();
+        //         latestChat.push(data.chats[i]);
+        //     }
+        // }
 
         if(data.group_flag == true){
             var s = "";
-            console.log("length of users dict", data.typing_status.length);
+            // console.log("length of users dict", data.typing_status.length);
             // console.log("length of users dict", data.typing_status[0].owner);
             for (let i=0; i<data.typing_status.length; i++){
                 if (data.typing_status[i].typingStatus == true){
-                    s = s + `user ${data.typing_status[i].owner} is typing `;
+                    s = s + `${data.typing_status[i].owner} `;
                     console.log(`====== => ${data.typing_status[i].owner}`);
                 }
                 
             }
-            if (s!=""){
+
+            if (s != ""){
                 window.document.querySelector('.typing_status').innerHTML = `users typing are => ${s}`;
             }
             else{
