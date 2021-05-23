@@ -10,13 +10,14 @@
     <script>
         var logMsg = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'logMessage' %}";
         var getChatsUrl = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getChats' %}";
+        var loadmessagesurl = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'loadPreviousMessages' %}";
         var sessionOwner = "{{sessionOwner}}";
         var crsfTocken = "{{csrf_token}}";
         var reader = "{{reader}}";
         var onGroup = "{{onGroup}}";
         var groupId ="{{groupId}}";
         var currentTimestamp = "{{currentTimestamp}}";
-
+        var groupProtection = "{{groupProtection}}";
         console.log("{% static '/css/index.css' %}");
     </script>
 
@@ -40,8 +41,7 @@
     <div class="main">
         <input type="text" id="msg" placeholder="Enetr msg">
         <button type="button" id='btn'>Send</button>
-        <button type="button" id='test'>test</button>
-
+        <button type="button" id='loadMessage'>Load Previous Messages</button>
     </div>
 
     <!-- <script type="text/javascript" src="{% static 'js/chat.js' %}"></script> -->
