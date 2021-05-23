@@ -6,7 +6,7 @@ from .models import Messages, UserStatus
 admin.site.register(Messages)
 
 class messagesTable(admin.ModelAdmin):
-    list_display = ('id', 'text', 'owner', 'timestamp', 'recipient', 'isGroup', 'groupId')
+    list_display = ('id', 'text', 'owner', 'timestamp', 'recipient', 'isGroup', 'groupId', 'approval_status')
 
 class userStatusTable(admin.ModelAdmin):
     list_display = ('id', 'owner', 'reader', 'onGroup', 'groupId', 'typing_status', 'timestamp')
