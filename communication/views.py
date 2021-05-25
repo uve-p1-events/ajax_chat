@@ -112,7 +112,9 @@ def chat(request):
 
         return render(request, "communication/chat.html", context={"sessionOwner": _owner, "reader": None, "onGroup": True, "groupId": _groupId, "groupProtection": True, "currentTimestamp": user_status.timestamp})
     else:
-        return render(request, "communication/chaterror.html", context={"msg": "please go to some valid page for either talking to user or in group"})
+        allUsers = User.objects.all()
+        return render(request, "communication/chat.html", context={"allUsers": allUsers,"sessionOwner": _owner, "reader": None, "onGroup": False, "groupId": "asdf", "groupProtection": True, "currentTimestamp": datetime.datetime.now()})
+        # return render(request, "communication/chaterror.html", context={"msg": "please go to some valid page for either talking to user or in group"})
 
 
 
