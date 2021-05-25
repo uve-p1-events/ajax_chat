@@ -19,8 +19,9 @@ function sendAprroveStatus(){
         console.log("error is ", e);
     })
 
-    console.log("here the approve list is ",approve_list);
+    // console.log("here the approve list is ",approve_list);
 }
+
 function approverFunction(i){
     var checkBox = document.getElementById(`${i}`);
     var deletecheckBox = document.getElementById(`${i}delete`);
@@ -33,6 +34,7 @@ function approverFunction(i){
 
     let temp_status = false;
     let temp_delete_status = false;
+
     if (checkBox.checked == true){
         temp_status = true;
         console.log(`checkboc with id ${i} is checked`);
@@ -60,7 +62,6 @@ function approverFunction(i){
                    }
         approve_list.push(info);
     }
-    // console.log("value of i is ", i);
 }
 
 function loadMessages(){
@@ -115,74 +116,9 @@ $('#getmsg').click(function(event) {
     loadMessages();
 });
 
+// On click listener for Update button
 $('#sendMsgStatus').click(function(event) {
     /* Act on the event */
     console.log("update status button clicked");
     sendAprroveStatus();
 });
-
-
-// window.document.querySelector('.typing_status').innerHTML = 'abhyam';
-
-// window.setInterval(() => {
-//     // detecting if user is not typing for more than 5 seconds.
-//     if(Math.abs(new Date() - startingtime) >= 3000){
-//         user_typing_status = false;
-//     } 
-
-//     $.ajax({
-//         url: getChatsUrl,
-//         type: 'POST',
-//         dataType: 'json',
-//         data:{ 
-//                 typingStatus: user_typing_status, 
-//                 recipient: reader, 
-//                 groupFlag: onGroup, 
-//                 group_id: groupId, 
-//                 currentStamp: currentTimestamp, 
-//                 csrfmiddlewaretoken: crsfTocken
-//             }
-//     })
-//     .done(function(data) {
-      
-//         for(let i = 0; i<data.chats.length; i++){
-//             $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
-//                                     <p class="deltableContainer">${data.chats[i].text}</p> &nbsp
-//                                     <input type="checkbox" id=${data.chats.id} onclick="myFunction()">
-//                                     <span class="time-right deltableContainer">${data.chats[i].timestamp}</span>
-//                                     <br>`);
-//         }
-
-           
-
-//         if(data.group_flag == true){
-//             var s = "";
-//             // console.log("length of users dict", data.typing_status.length);
-//             // console.log("length of users dict", data.typing_status[0].owner);
-//             for (let i=0; i<data.typing_status.length; i++){
-//                 if (data.typing_status[i].typingStatus == true){
-//                     s = s + `${data.typing_status[i].owner} `;
-//                     console.log(`====== => ${data.typing_status[i].owner}`);
-//                 }
-                
-//             }
-
-//             if (s != ""){
-//                 window.document.querySelector('.typing_status').innerHTML = `users typing are => ${s}`;
-//             }else{
-//                 window.document.querySelector('.typing_status').innerHTML = s;
-//             }
-//             // console.log(`users typing are => ${data.typing_status[0].owner}`);
-//         }else{
-//             if(data.typing_status == true){
-//                 window.document.querySelector('.typing_status').innerHTML = `user : ${reader} is typing`;
-//             }else{
-//                 window.document.querySelector('.typing_status').innerHTML = "";
-//             }
-//             console.log(`users ${reader} typing status => ${data.typing_status}`);
-//         }
-//     })
-//     .fail(function(e) {
-//         console.log("error is ", e);
-//     })
-//   },1000);
