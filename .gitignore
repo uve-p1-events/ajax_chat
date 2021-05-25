@@ -2,3 +2,8 @@ venv
 testing_code_samples.txt
 communication/templates/communication/chat.html
 .vscode/settings.json
+
+
+# Pycache
+*/__pycache__
+*/*/__pycache__
