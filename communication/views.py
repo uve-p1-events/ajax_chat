@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseNotFound, HttpResponseRedirect                            # for loading http response
 from django.contrib import  messages                            # for informing the form about some error or giving message
 from django.contrib.auth.models import (User, auth)             # for verifying users
-from django.shortcuts import render, redirect           # for rendering the template http file
+from django.shortcuts import render, redirect                   # for rendering the template http file
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .models import Messages, UserStatus
@@ -172,7 +172,7 @@ def get_all_chats(request):
             if _group_flag:
                 chats = Messages.objects.all().filter(isGroup=True, groupId=_group_id, approval_status=True).order_by('-timestamp')[:20][::-1]
                 typing_status = UserStatus.objects.all().filter(onGroup=True, groupId=_group_id, typing_status=True)
-                print("chat is ==============>>>>>>>>", chats)
+                # print("chat is ==============>>>>>>>>", chats)
                 for chat in chats:
                     dict_object = chat.get_items_as_dict()
                     all_chats.append(dict_object)
@@ -208,7 +208,6 @@ def load_previous_messages(request):
         if request.user.is_authenticated:
             all_chats = []
             msg_data = json.loads(request.POST.get("dataObject"))
-            # print(msg_data['id'], msg_data['text'])
             _owner = request.user.username
             _reader = request.POST.get("recipient", None)
             _group_flag = True if request.POST.get("groupFlag", False) == str("True") else False
@@ -219,7 +218,6 @@ def load_previous_messages(request):
          
                 for chat in chats:
                     dict_object = chat.get_items_as_dict()
-                    # dict_object = model_to_dict(chat)
                     all_chats.append(dict_object)
             
                 return JsonResponse({"chats": all_chats, "group_flag": True}, safe=False)
@@ -229,14 +227,11 @@ def load_previous_messages(request):
 
                 for chat in chats:
                     dict_object = chat.get_items_as_dict()
-                    # dict_object = model_to_dict(chat)
                     all_chats.append(dict_object)
 
                 print(list(all_chats))
                 return JsonResponse({"chats": all_chats, "group_flag": False}, safe=False)
 
-
-            # return JsonResponse({"message": "sent successfully"}, safe=False)
         else:
             return HttpResponse("sigin first to see the message")
     
@@ -296,7 +291,6 @@ def approve_pre_moderator_msgs(request):
     if request.method == "POST":
         if (request.user.is_authenticated and request.user.is_staff):
             msg_data = json.loads(request.POST.get("msg_data", None))
-            print("=============================\n", msg_data)
             for msg in msg_data:
                 msg_delete_status = msg.get("deleteStatus", False)
                 if msg_delete_status:
@@ -317,79 +311,3 @@ def approve_pre_moderator_msgs(request):
     
     else:
         return JsonResponse({"message": "Please do request with a valid request type and verified account to approve the messages"}, safe=False)
-    
-    # return render(request, "communication/preModeratorView.html", context={"sessionOwner": _owner})
-
-    
-    # if _groupId is not None:
-    #     group_ids = _groupId.split(',')
-    #     print("served from group")
-    #     chats = Messages.objects.all().filter(isGroup=True, groupId=_group_id, approval_status=True).order_by('-timestamp')[:20][::-1]
-    #     typing_status = UserStatus.objects.all().filter(onGroup=True, groupId=_group_id, typing_status=True)
-    #     # print("chat is ==============>>>>>>>>", chats)
-    #     for chat in chats:
-    #         dict_object = chat.get_items_as_dict()
-    #         all_chats.append(dict_object)
-
-    #     for s in typing_status:
-    #         typing_obj = s.get_status()
-    #         typing_status_users_list.append(typing_obj)
-
-    #     print(list(typing_status_users_list))
-    #     return JsonResponse({"chats": all_chats, "typing_status": typing_status_users_list, "group_flag": True}, safe=False)
-        # if UserStatus.objects.filter(onGroup=True, owner=_owner, groupId=_groupId).exists():
-        #     user_status = UserStatus.objects.filter(owner=_owner, onGroup=True, groupId=_groupId)[0]
-        #     user_status.reader = None
-        #     user_status.onGroup = True
-        #     user_status.groupId = _groupId
-        #     user_status.timestamp = datetime.datetime.now()
-        #     user_status.save()
-        # else:
-        #     user_status = UserStatus.objects.create(owner=_owner, reader=None, onGroup=True, groupId=_groupId, timestamp=datetime.datetime.now())
-        #     user_status.save()
-
-        # return render(request, "communication/chat.html", context={"sessionOwner": _owner, "reader": None, "onGroup": True, "groupId": _groupId, "currentTimestamp": user_status.timestamp})
-    # else:
-    #     return render(request, "communication/chaterror.html", context={"msg": "please go to some valid page for either talking to user or in group"})
-        
-
-
-    # if request.method == "POST":
-    #     if request.user.is_staff:
-    #         all_chats = []
-    #         msg_data = json.loads(request.POST.get("dataObject"))
-    #         # print(msg_data['id'], msg_data['text'])
-    #         _owner = request.user.username
-    #         _reader = request.POST.get("recipient", None)
-    #         _group_flag = True if request.POST.get("groupFlag", False) == str("True") else False
-    #         _group_id = None if request.POST.get("group_id", None) == str('None') else int(request.POST.get("group_id", None))
-
-    #         if _group_flag:
-    #             chats = Messages.objects.all().filter(isGroup=True, groupId=_group_id, timestamp__lte=msg_data['normal_timestamp']).order_by('-timestamp')[:20][::-1]
-         
-    #             for chat in chats:
-    #                 dict_object = chat.get_items_as_dict()
-    #                 # dict_object = model_to_dict(chat)
-    #                 all_chats.append(dict_object)
-            
-    #             return JsonResponse({"chats": all_chats, "group_flag": True}, safe=False)
-
-    #         else:
-    #             chats = Messages.objects.all().filter(isGroup=False, owner=_owner, recipient=_reader, timestamp__lte=msg_data['normal_timestamp']).union(Messages.objects.all().filter(isGroup=False, owner=_reader, recipient=_owner, timestamp__lte=msg_data['normal_timestamp'])).order_by('-timestamp')[:20][::-1]
-
-    #             for chat in chats:
-    #                 dict_object = chat.get_items_as_dict()
-    #                 # dict_object = model_to_dict(chat)
-    #                 all_chats.append(dict_object)
-
-    #             print(list(all_chats))
-    #             return JsonResponse({"chats": all_chats, "group_flag": False}, safe=False)
-
-
-    #         return JsonResponse({"message": "sent successfully"}, safe=False)
-    #     else:
-    #         return HttpResponse("sigin first to see the message", content_type='application/json')
-    
-    # else:
-    #     return HttpResponse("Please do a post request with verified account to get the service", content_type='application/json')
-

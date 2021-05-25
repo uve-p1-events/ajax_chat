@@ -123,10 +123,7 @@ window.setInterval(() => {
             }
     })
     .done(function(data) {
-        // $("img").remove(".deltableContainer");
-        // $("p").remove(".deltableContainer");
         if (typeof(latestChat) !== "undefined"){
-        // $("span").remove(".deltableContainer");
             console.log("executed from length >0");
             console.log("from >0 value of latestchat is", latestChat);
             
