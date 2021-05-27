@@ -1,2 +1,8 @@
 venv
 testing_code_samples.txt
+.vscode/settings.json
+
+
+# Pycache
+*/__pycache__
+*/*/__pycache__
