@@ -1,4 +1,4 @@
-from django.http import HttpResponse,HttpResponseNotFound, HttpResponseRedirect                            # for loading http response
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect                            # for loading http response
 from django.contrib import  messages                            # for informing the form about some error or giving message
 from django.contrib.auth.models import (User, auth)             # for verifying users
 from django.shortcuts import render, redirect                   # for rendering the template http file
@@ -113,19 +113,47 @@ def chat(request):
         return render(request, "communication/chat.html", context={"sessionOwner": _owner, "reader": None, "onGroup": True, "groupId": _groupId, "groupProtection": True, "currentTimestamp": user_status.timestamp})
     else:
         allUsers = User.objects.all()
-        return render(request, "communication/chat.html", context={"allUsers": allUsers,"sessionOwner": _owner, "reader": None, "onGroup": False, "groupId": "asdf", "groupProtection": True, "currentTimestamp": datetime.datetime.now()})
+        return render(request, "communication/chat.html", context={"allUsers": allUsers, "sessionOwner": _owner, "reader": None, "onGroup": False, "groupId": "asdf", "groupProtection": True, "currentTimestamp": datetime.datetime.now()})
         # return render(request, "communication/chaterror.html", context={"msg": "please go to some valid page for either talking to user or in group"})
 
 
 
 @login_required(login_url="/")
+def getChatUserInfo(request):
+    _owner = request.user.username
+    _user = request.POST.get('user', None)
+
+    if _user != _owner:
+        print("recipt user is ", _user)
+        if User.objects.filter(username=_user).exists():
+            if UserStatus.objects.filter(owner=_owner, reader=_user, onGroup=False).exists():
+                user_status = UserStatus.objects.filter(owner=_owner, reader=_user, onGroup=False)[0]
+                user_status.reader = _user
+                user_status.onGroup = False
+                user_status.groupId = None
+                user_status.timestamp = datetime.datetime.now()
+                user_status.save()
+            else:
+                user_status = UserStatus.objects.create(owner=_owner, reader=_user, onGroup=False, groupId=None, timestamp=datetime.datetime.now())
+                user_status.save()
+
+            return JsonResponse({"sessionOwner": _owner, "reader": _user, "onGroup": False, "groupId": 123, "currentTimestamp": user_status.timestamp})
+
+        else:
+            return JsonResponse({"message": "please provide a valid username to chat with"}, safe=False)
+    else:
+        return JsonResponse({"message": "you can not talk to yourself, please mention name of ther user to chat with"}, safe=False)
+
+
+@login_required(login_url="/")
 def log_message(request):
+    print("request value is ==>> ", request)
     if request.method == "POST":
         _owner = request.user.username
         _msg = request.POST.get("msg", "")
         _reader = request.POST.get("recipient", None)
         _group_flag = True if request.POST.get("groupFlag", False) == str("True") else False
-        _group_id = None if request.POST.get("group_id", None) == str('None') else int(request.POST.get("group_id", None))
+        _group_id = None if (request.POST.get("group_id", None) == str('None') or request.POST.get("group_id", None) == str('')) else int(request.POST.get("group_id", None))
         _time_stamp = request.POST.get("currentStamp", datetime.datetime.now())
 
         # print("==========================================================", type(request.POST.get("groupFlag", False)))
@@ -144,8 +172,11 @@ def log_message(request):
             print("message saved successfully")
         except :
             print("something happened and message is not saved to database")
-    
-    return JsonResponse('hit', safe=False)
+        
+        return JsonResponse({"message":"Message sent Successfully"}, safe=False)
+
+    else:
+        return JsonResponse({"message":"Please do post request to this link to perform the desire task i.e. to send your message"}, safe=False)
     # return HttpResponse("yes user is logged in and user is {}".format(request.user.username))
 
 
@@ -158,10 +189,11 @@ def get_all_chats(request):
             _owner = request.user.username
             _reader = request.POST.get("recipient", None)
             _group_flag = True if request.POST.get("groupFlag", False) == str("True") else False
-            _group_id = None if request.POST.get("group_id", None) == str('None') else int(request.POST.get("group_id", None))
+            # print("=======>>>>>>>>>>.", request.POST.get("group_id", None))
+            _group_id = None if (request.POST.get("group_id", None) == str('None') or request.POST.get("group_id", None) == str('')) else int(request.POST.get("group_id", None))
             _time_stamp = request.POST.get("currentStamp", datetime.datetime.now())
 
-            print("========>>>>>>>>>>>>here owner is {} and message is {} {} {} {} ".format(_owner, _reader, _group_flag, _group_id, _time_stamp))
+            # print("========>>>>>>>>>>>>here owner is {} and message is {} {} {} {} ".format(_owner, _reader, _group_flag, _group_id, _time_stamp))
 
             update_typing_status = UserStatus.objects.filter(owner=_owner)[0]
             update_typing_status.typing_status = False if status == str("false") else True
@@ -183,20 +215,25 @@ def get_all_chats(request):
                     typing_obj = s.get_status()
                     typing_status_users_list.append(typing_obj)
 
-                print(list(typing_status_users_list))
+                # print(list(typing_status_users_list))
                 return JsonResponse({"chats": all_chats, "typing_status": typing_status_users_list, "group_flag": True}, safe=False)
 
             else:
                 chats = Messages.objects.all().filter(isGroup=False, owner=_owner, recipient=_reader).union(Messages.objects.all().filter(isGroup=False, owner=_reader, recipient=_owner)).order_by('-timestamp')[:20][::-1]
                 # print("chat is ==============>>>>>>>>", chats)
-                typing_status = UserStatus.objects.all().filter(onGroup=False, owner=_reader)[0]
 
                 for chat in chats:
                     dict_object = chat.get_items_as_dict()
                     all_chats.append(dict_object)
+                # print(list(all_chats))    
+            
+                try:
+                    typing_status = UserStatus.objects.all().filter(onGroup=False, owner=_reader)[0]
+                    return JsonResponse({"chats": all_chats, "typing_status": typing_status.get_typing_status(), "group_flag": False}, safe=False)
+                except:
+                    print("Owner with user name {} does not yet started to talk to the guy with name {}".format(_reader, _owner))   
+                    return JsonResponse({"chats": all_chats, "typing_status": False, "group_flag": False}, safe=False)
 
-                print(list(all_chats))
-                return JsonResponse({"chats": all_chats, "typing_status": typing_status.get_typing_status(), "group_flag": False}, safe=False)
 
         else:
             return JsonResponse({"message": "sigin first to see the message"}, safe=False)

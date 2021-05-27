@@ -7,6 +7,7 @@ urlpatterns = [
     path('register', views.registerUser, name='registerUser'),
     path('logout', views.logout, name='logout'),
     path('chat/', views.chat, name='chatwindow'),
+    path('getChatUserInfo', views.getChatUserInfo, name='getChatUserInfo'),
     path('log_message', views.log_message, name='logMessage'),
     path('getChats', views.get_all_chats, name='getChats'),
     path('loadmessages', views.load_previous_messages, name='loadPreviousMessages'),
