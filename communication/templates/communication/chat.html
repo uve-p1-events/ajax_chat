@@ -4,50 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat</title>
+
     {% load static %}
-    <!-- <link href="{% static 'css/chat.css' %}" rel="stylesheet"> -->
-    <!-- <link rel="stylesheet" href="{% static 'css/ui.css' %}"> -->
+
     <link rel="stylesheet" href="{% static 'css/chatUi.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <script type="text/javascript" src="{% static '/js/chat.js' %}"></script> -->
+
     <script>
         var logMsg = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'logMessage' %}";
         var getChatsUrl = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getChats' %}";
         var loadmessagesurl = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'loadPreviousMessages' %}";
-        var getChatUserInfo = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getChatUserInfo' %}"
+        var getChatUserInfo = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getChatUserInfo' %}";
+        var getGroupChatInfo = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getGroupChatInfo' %}";
         var sessionOwner = "{{sessionOwner}}";
-        var reader = "{{reader}}";
-        var onGroup = "{{onGroup}}";
-        var groupId = "{{groupId}}";
-        var currentTimestamp = "{{currentTimestamp}}";
-        var groupProtection = "{{groupProtection}}";
         var crsfTocken = "{{csrf_token}}";
-        console.log("{% static '/css/index.css' %}");
     </script>
-
-
-
 </head>
 
 <body>
 
-    <div class="container clearfix">
+    <div class="logoutNavigation">
+        <a class="logoutButton" href="{% url 'logout' %}">
+            <img src="https://avatars.dicebear.com/api/human/{{sessionOwner}}.svg" class="logoutImg">
+            <div class="logout">LOGOUT</div>
+        </a>    
+    </div>
+
+    <div class="container clearfix"  style="right: -60px;">
         <div class="people-list" id="people-list">
             <div class="search">
-                <input type="text" placeholder="search" />
+                <input type="text" placeholder="search" id="searchProfile"/>
                 <i class="fa fa-search"></i>
             </div>
             <div class="chat-users-list">
-                <ul class="list">
+                <ul class="list" id="profileUL">
+                    {% for group in allGroups %}
+                            {% if sessionOwner in group.members %}
+                                <li class="clearfix users__item users__item_group single-user" id="{{group.groupId}}">
+                                    <div class="groupAvatar group__avatar circular_image" title="{{group.groupName}}"> 
+                                        <div class="group__avatar__wrap" href="#">
+                                            {{group.groupName.0|upper}}
+                                        </div>
+                                    </div>
+                                    <div class="about">
+                                        <div class="name" title="{{group.groupName}} {% if group.protectedStatus %} [PROTECTED] {% endif %} ">{{group.groupName}}</div>
+                                        <div class="status" title="{{group.description}}">
+                                            <i class="fa fa-circle online"></i> Group {% if group.protectedStatus %} [PROTECTED] {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                    {% endfor %}
                     {% for user in allUsers %}
                         {% if user.username != sessionOwner %}
                             <li class="clearfix users__item users__item_group single-user">
-                                <!-- <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" /> -->
-                                <img src="https://avatars.dicebear.com/api/human/{{user.username}}.svg" alt="avatar" class="circular_image" />
+                                <img src="https://avatars.dicebear.com/api/human/{{user.username}}.svg" alt="avatar" class="circular_image" title="{{user.username}}"/>
                                 <div class="about">
-                                    <div class="name">{{user.username}}</div>
+                                    <div class="name" title="{{user.username}}">{{user.username}}</div>
                                     <div class="status">
-                                        <i class="fa fa-circle online"></i> online
+                                        <!-- <i class="fa fa-circle online"></i> online -->
                                     </div>
                                 </div>
                             </li>
@@ -87,18 +102,21 @@
 
         <div class="chat">
             <div class="chat-header clearfix">
-                <img alt="avatar" class="active-user-logo circular_image"/>
-                <div class="chat-about">
-                    <div class="chat-with"></div>
-                    <div class="chat-num-messages"></div>
+                <div>
+                    <div class="activeProfileDiv">
+                        <!-- <img class="active-user-logo circular_image"/> -->
+                    </div>
+                    <div class="chat-about">
+                        <div class="chat-with"></div>
+                        <div class="chat-num-messages"></div>
+                    </div>
                 </div>
-                <div><button type="button"  class="fa fa-star head__icon" id='loadOldMessages'></button></div>
-                <!-- <i class="fa fa-star head__icon">Load More</i> -->
+                <div><button type="button" id='loadOldMessages' title="Load More Messages" style="float:right;"><i class="arrow up"></i></button></div>
             </div> <!-- end chat-header -->
 
             <div class="chat-history">
                 <ul class="chat-history-ul">
-                    <li class="clearfix">
+                    <!-- <li class="clearfix">
                         <div class="message-data align-right">
                             <span class="message-data-time">10:10 AM, Today</span> &nbsp; &nbsp;
                             <span class="message-data-name">Olia</span> <i class="fa fa-circle me"></i>
@@ -139,7 +157,7 @@
                         <div class="message my-message">
                             Actually everything was fine. I'm very excited to show this to our team.
                         </div>
-                    </li>
+                    </li> -->
 
                     <!-- <li>
                         <div class="message-data">
