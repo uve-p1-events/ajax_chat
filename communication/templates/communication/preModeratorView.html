@@ -18,7 +18,7 @@
         var crsfTocken = "{{csrf_token}}";
 
         {% for group in groupIds %}
-            groupList.push( {{group}} );
+            groupList.push( "{{group}}" );
         {% endfor %}
         
         console.log("here the list is ", groupList);
