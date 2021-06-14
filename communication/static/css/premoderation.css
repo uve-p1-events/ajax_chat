@@ -1,0 +1,235 @@
+.container {
+	width: 1024px;
+	padding: 2em;
+}
+
+.bold-blue {
+	font-weight: bold;
+	color: #0277BD;
+}
+
+body {
+	padding: 0 2em;
+	font-family: Montserrat, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	color: #444;
+	background: #092756;
+	background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/image.jpg");
+	background-size: cover;
+	background-repeat: none;
+}
+
+h1 {
+	font-weight: normal;
+	letter-spacing: -1px;
+	color: #59bb20;
+}
+
+@import "https://fonts.googleapis.com/css?family=Montserrat:300,400,700";
+
+.rwd-table {
+	margin: 1em 0;
+	min-width: 300px;
+	width: 100%;
+	height: auto;
+	border-collapse: collapse;
+}
+
+
+/* start custom */
+.checkbox {
+	width: 20px;
+}
+
+.timestamp {
+	width: 120px;
+}
+
+.msg_column {
+	width: auto;
+	height: auto;
+	resize: vertical;
+	overflow-x: scroll;
+	max-width: 800px;
+}
+
+.owner_column {
+	width: 100px;
+	height: auto;
+	resize: vertical;
+	overflow-x: scroll;
+	max-width: 200px;
+}
+
+/* *{box-sizing: border-box;} */
+
+div {
+	resize: both;
+	overflow: hidden;
+	height: auto;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid black;
+	display: block;
+}
+
+.rwd-table td div {
+	border: 0;
+	width: auto;
+	height: auto;
+	max-width: 100%;
+}
+
+/* stop custom */
+
+
+.rwd-table tr {
+	border-top: 1px solid rgb(0, 0, 0);
+	border-bottom: 1px solid rgb(0, 0, 0);
+}
+
+.rwd-table th {
+	display: none;
+	border: 1px solid black;
+}
+
+.rwd-table td {
+	display: block;
+	max-width: 100px;
+	width: auto;
+	height: auto;
+	border: 1px solid black;
+}
+
+.rwd-table td:first-child {
+	padding-top: 0.5em;
+}
+
+.rwd-table td:last-child {
+	padding-bottom: 0.5em;
+}
+
+.rwd-table td:before {
+	content: attr(data-th) ": ";
+	font-weight: bold;
+	width: 6.5em;
+	display: inline-block;
+}
+
+@media (min-width: 480px) {
+	.rwd-table td:before {
+		display: none;
+	}
+}
+
+.rwd-table th,
+.rwd-table td {
+	text-align: left;
+}
+
+@media (min-width: 480px) {
+
+	.rwd-table th,
+	.rwd-table td {
+		display: table-cell;
+		padding: 0.25em 0.5em;
+	}
+
+	.rwd-table th:first-child,
+	.rwd-table td:first-child {
+		padding-left: 0;
+	}
+
+	.rwd-table th:last-child,
+	.rwd-table td:last-child {
+		padding-right: 0;
+	}
+}
+
+.rwd-table {
+	background: #34495e;
+	color: #fff;
+	border-radius: 0.4em;
+	overflow: hidden;
+	border: 1px solid grey;
+}
+
+.rwd-table tr {
+	border-color: #46637f;
+}
+
+/* .rwd-table th,
+.rwd-table td {
+	margin: 0.5em 1em;
+} */
+
+@media (min-width: 480px) {
+
+	.rwd-table th,
+	.rwd-table td {
+		padding: 1em !important;
+	}
+}
+
+.rwd-table th,
+.rwd-table td:before {
+	color: #dd5;
+}
+
+/* customs */
+
+.main {
+	position: relative;
+	bottom: 20px;
+	margin-top: 50px;
+}
+
+a.button8 {
+	display: inline-block;
+	padding: 0.2em 1.45em;
+	margin: 0.1em;
+	border: 0.15em solid #CCCCCC;
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: 'Segoe UI', 'Roboto', sans-serif;
+	font-weight: 400;
+	color: #000000;
+	background-color: #CCCCCC;
+	text-align: center;
+	position: relative;
+}
+
+a.button8:hover {
+	border-color: #7a7a7a;
+}
+
+a.button8:active {
+	background-color: #999999;
+}
+
+@media all and (max-width:30em) {
+	a.button8 {
+		display: block;
+		margin: 0.2em auto;
+	}
+}
+
+/* for checkbox css */
+
+label {
+	display: inline-block;
+	margin-right: 0.25rem;
+}
+
+input[type="checkbox"] {
+	appearance: none;
+}
+
+input[type="checkbox"]::before {
+	content: '🔲';
+}
+
+input[type="checkbox"]:checked::before {
+	content: '✅';
+}

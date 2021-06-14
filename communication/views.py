@@ -58,6 +58,7 @@ def registerUser(request):
         return render(request, 'communication/login_signup.html')
 
 
+
 # abhyam123@admin
 def loginUser(request):
     if(request.method == "POST"):
@@ -75,6 +76,7 @@ def loginUser(request):
     else:
         return render(request, 'communication/login_signup.html')
 
+
 @login_required(login_url="/")
 def logout(request):
     auth.logout(request)
@@ -82,17 +84,28 @@ def logout(request):
     return HttpResponseRedirect(reverse('loginUser'))
 
 
-@login_required(login_url="/")
+@login_required(login_url="/login")
 def chat(request):
     _owner = request.user.username
     _user = request.GET.get('user', None)
     _groupId = request.GET.get("groupId", None)
 
-    all_users = User.objects.all()
+    all_users = User.objects.all().order_by('username')
     all_groups = Groups.objects.all().filter(groupStatus=True)
-    # all_user_status = UserStatus.objects.all()
-    
+    all_user_status = UserStatus.objects.all().order_by("-timestamp").order_by("owner") 
+    for x in all_users:
+        print(x)
+    print("")
+    x = ""
+    for t in all_user_status:
+        if x==t.owner :
+            x = t.owner
+            all_user_status.remove(t)
+            # print(t)
+    for c in all_user_status:
+        print(c)
     return render(request, "communication/chat.html", context={"allUsers": all_users, "allGroups": all_groups, "sessionOwner": _owner})
+
 
 
 @login_required(login_url="/")
@@ -120,6 +133,7 @@ def getChatUserInfo(request):
             return JsonResponse({"message": "please provide a valid username to chat with"}, safe=False)
     else:
         return JsonResponse({"message": "you can not talk to yourself, please mention name of ther user to chat with"}, safe=False)
+
 
 
 @login_required(login_url="/")
@@ -150,6 +164,7 @@ def getGroupChatInfo(request):
 
     else:
         return JsonResponse({"message": "Please send the valid credentials of the group"}, safe=False)
+
 
 
 @login_required(login_url="/")
@@ -344,6 +359,7 @@ def get_pre_moderator_chats(request):
 
 
 def approve_pre_moderator_msgs(request):
+    print("*************************************************************************************************************got messages***********************************")
     if request.method == "POST":
         if (request.user.is_authenticated and request.user.is_staff):
             msg_data = json.loads(request.POST.get("msg_data", None))

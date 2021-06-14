@@ -13,7 +13,7 @@ class userStatusTable(admin.ModelAdmin):
     list_display = ('id', 'owner', 'reader', 'onGroup', 'groupId', 'typing_status', 'timestamp')
 
 class groupsTable(admin.ModelAdmin):
-    list_display = ('id', 'groupId', "groupName", "owner", "description", "protectedStatus", "members", "totalMembers", "timestamp")
+    list_display = ('id', 'groupId', "groupName", "owner", "description", "protectedStatus", "members", "totalMembers", "groupStatus", "timestamp")
 
 admin.site.unregister(Messages)
 admin.site.register(Messages, messagesTable)

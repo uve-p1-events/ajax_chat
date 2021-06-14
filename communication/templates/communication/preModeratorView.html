@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderator View</title>
     {% load static %}
-    <link href="{% static 'css/chat.css' %}" rel="stylesheet">  
+    <link href="{% static 'css/premoderation.css' %}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
         var loadmessagesurl = "{{request.scheme}}://{{request.META.HTTP_HOST}}{% url 'getpremoderatormsgs' %}";
@@ -18,31 +19,54 @@
         var crsfTocken = "{{csrf_token}}";
 
         {% for group in groupIds %}
-            groupList.push( "{{group}}" );
+        groupList.push("{{group}}");
         {% endfor %}
-        
+
         console.log("here the list is ", groupList);
+        console.log("approve url is", approveMessageUrl);
     </script>
 </head>
+
 <body>
-    <p>Pre Moderator Window</p>
-    <div class="left">
+    <h1><b>Pre Moderator Window</b></h1>
+    <table class="rwd-table">
+        <thead>
+            <tr>
+                <th class="checkbox">Approve Status</th>
+                <th class="msg_column">Message</th>
+                <th class="owner_column">Owner</th>
+                <th class="timestamp">Timestamp</th>
+                <th class="checkbox">Delete Status</th>
+            </tr>
+        </thead>
+        <tbody>
+           
+        </tbody>
+    </table>
+
+    <footer class="main">
+        <a href="javascript:void(0);" class="button8" id='getmsg'>Get Messages</a>
+        <a href="javascript:void(0);" class="button8" id='sendMsgStatus'>Update Status</a>
+    </footer>
+
+    <!-- <div class="left">
         <a href="{% url 'logout' %}">logout</a>
         <h1>Pre Moderator Window</h1>
     </div>
 
     <div class="container">
-        <!-- <img src="/w3images/bandmember.jpg" alt="Avatar">
+        <img src="/w3images/bandmember.jpg" alt="Avatar">
         <p>Hello. How are you today?</p>
-        <span class="time-right">11:00</span> -->
+        <span class="time-right">11:00</span>
     </div>
   
   
     <div class="main">
         <button type="button" id='getmsg'>Get Messages</button>
         <button type="button" id='sendMsgStatus'>Update Status</button>
-    </div>
+    </div> -->
 
-    <script type="text/javascript" src="{% static '/js/preModulatorView.js' %}"></script>    
+    <script type="text/javascript" src="{% static '/js/preModulatorView.js' %}"></script>
 </body>
+
 </html>

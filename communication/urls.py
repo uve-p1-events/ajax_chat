@@ -3,10 +3,10 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.loginUser, name='loginUser'),
+    path('', views.chat, name='chatwindow'),
+    path('login', views.loginUser, name='loginUser'),
     path('register', views.registerUser, name='registerUser'),
     path('logout', views.logout, name='logout'),
-    path('chat/', views.chat, name='chatwindow'),
     path('getChatUserInfo', views.getChatUserInfo, name='getChatUserInfo'),
     path('getGroupChatInfo', views.getGroupChatInfo, name='getGroupChatInfo'),
     path('log_message', views.log_message, name='logMessage'),

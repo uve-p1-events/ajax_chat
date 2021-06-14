@@ -1,4 +1,5 @@
 var approve_list = [];
+$tablebodyitems = $(".rwd-table>tbody");
 
 function sendAprroveStatus(){
     $.ajax({
@@ -18,8 +19,8 @@ function sendAprroveStatus(){
     .fail(function(e) {
         console.log("error is ", e);
     })
-
-    // console.log("here the approve list is ",approve_list);
+    console.log("approve url is", approveMessageUrl);
+    console.log("here the approve list is ",approve_list);
 }
 
 function approverFunction(i){
@@ -65,11 +66,9 @@ function approverFunction(i){
 }
 
 function loadMessages(){
-    // console.log(groupIdsList);
-    $("img").remove(".deltableContainer");
-    $("p").remove(".deltableContainer");
-    $("span").remove(".deltableContainer");
     console.log("pehele", groupList);
+    $tablebodyitems.empty();
+
     $.ajax({
         url: loadmessagesurl,
         type: 'POST',
@@ -84,14 +83,22 @@ function loadMessages(){
         approve_list = [];
         console.log(data);
         for(let i = 0; i<data.chats.length; i++){
-            $('.container').append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
-                                    <p class="deltableContainer">${data.chats[i].text}
-                                    <input type="checkbox" class="deltableContainer" name="${data.chats[i].id}" id="${data.chats[i].id}" onclick="approverFunction(${data.chats[i].id})" checked/>
-                                    <b>DELETE MESSAGE ? </b>
-                                    <input type="checkbox" class="deltableContainer" name="${data.chats[i].id}" id="${data.chats[i].id}delete" onclick="approverFunction(${data.chats[i].id})"/>
-                                    </p> 
-                                    <span class="deltableContainer time-right">${data.chats[i].timestamp}</span>
-                                    <br>`);
+            $tablebodyitems.append(`<tr>
+                                        <td> <input type="checkbox" id="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}" onclick="approverFunction(${data.chats[i].id})" checked/> </td>
+                                        <td> <div> ${data.chats[i].text} </div></td>
+                                        <td> ${data.chats[i].owner} </td>
+                                        <td> ${data.chats[i].timestamp} </td>
+                                        <td> <input type="checkbox" id="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}delete" onclick="approverFunction(${data.chats[i].id})"/> </td>
+                                    </tr>
+                                `);
+            // $tablebodyitems.append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
+            //                         <p class="deltableContainer">${data.chats[i].text}
+            //                         <input type="checkbox" class="deltableContainer" name="${data.chats[i].id}" id="${data.chats[i].id}" onclick="approverFunction(${data.chats[i].id})" checked/>
+            //                         <b>DELETE MESSAGE ? </b>
+            //                         <input type="checkbox" class="deltableContainer" name="${data.chats[i].id}" id="${data.chats[i].id}delete" onclick="approverFunction(${data.chats[i].id})"/>
+            //                         </p> 
+            //                         <span class="deltableContainer time-right">${data.chats[i].timestamp}</span>
+            //                         <br>`);
             let info = {
                             id: data.chats[i].id,
                             group_id: data.chats[i].groupID,
