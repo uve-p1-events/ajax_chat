@@ -84,11 +84,11 @@ function loadMessages(){
         console.log(data);
         for(let i = 0; i<data.chats.length; i++){
             $tablebodyitems.append(`<tr>
-                                        <td> <input type="checkbox" id="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}" onclick="approverFunction(${data.chats[i].id})" checked/> </td>
+                                        <td> <input type="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}" onclick="approverFunction(${data.chats[i].id})" checked/> </td>
                                         <td> <div> ${data.chats[i].text} </div></td>
                                         <td> ${data.chats[i].owner} </td>
                                         <td> ${data.chats[i].timestamp} </td>
-                                        <td> <input type="checkbox" id="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}delete" onclick="approverFunction(${data.chats[i].id})"/> </td>
+                                        <td> <input type="checkbox" name="${data.chats[i].id}" id="${data.chats[i].id}delete" onclick="approverFunction(${data.chats[i].id})"/> </td>
                                     </tr>
                                 `);
             // $tablebodyitems.append(`<img src="/w3images/bandmember.jpg" alt="${data.chats[i].owner}" class="deltableContainer">
