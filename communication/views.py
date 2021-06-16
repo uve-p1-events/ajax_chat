@@ -359,7 +359,6 @@ def get_pre_moderator_chats(request):
 
 
 def approve_pre_moderator_msgs(request):
-    print("*************************************************************************************************************got messages***********************************")
     if request.method == "POST":
         if (request.user.is_authenticated and request.user.is_staff):
             msg_data = json.loads(request.POST.get("msg_data", None))
